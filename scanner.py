@@ -10,20 +10,16 @@ def getchar(text,pos):
 	or None if out of bounds """
 
 	if pos<0 or pos>=len(text): return None
-
+	temp = None
 	c = text[pos]
+	prev = False
 
 	# **Σημείο #3**: Προαιρετικά, προσθέστε τις δικές σας ομαδοποιήσεις
-	if pos = 0:
-			if c>='0' and c<='2': return '0-2'	# 0..9 grouped together
-
-	if pos = 1 and c = '3':
-		if c>='0' and c<='4': return '0-4'
-
-	if (pos = 1 and c = '0-2') or (pos = 2 and (c = '0-4' or c '0-9')) or pos >= 3:
-		if c>='0' and c<='9': return '0-9'
+	if c >= '6' and c <= '9':
+		return '6-9'
 
 	return c	# anything else
+
 
 
 
@@ -44,7 +40,6 @@ def scan(text,transitions,accepts):
 	while True:
 
 		c = getchar(text,pos)	# get next char (category)
-
 		if state in transitions and c in transitions[state]:
 			state = transitions[state][c]	# set new state
 			pos += 1	# advance to next char
@@ -64,23 +59,25 @@ def scan(text,transitions,accepts):
 
 
 # **Σημείο #1**: Αντικαταστήστε με το δικό σας λεξικό μεταβάσεων
-transitions = { 'q0': { '0-2':'q1', '3':'q2' },
-       			'q1': { '0-9':'q3' },
-       			'q2': { '0-4':'q4', '5':'q5' },
-       			'q3': { '0-9':'q6' },
-				'q4': { '0-9':'q6' },
-				'q5': { '0':'q6' },
-				'q6': { '0-9':'q7' },
-				'q7': { '0-9':'q8' },
-				'q8': { 'K':'q9', 'G':'q10' },
-				'q9': { 'T':'q13' },
-				'q10': { '0-9':'q11' },
-				'q11': { '0-9':'q12' },
-				'q12': { 'K':'q9' },
+transitions = { 'q0': { '0':'q1', '1':'q1', '2':'q1', '3':'q2' },
+       			'q1': { '0':'q3', '1':'q3', '2':'q3', '3':'q3', '4':'q3', '5':'q3', '6-9':'q3' },
+       			'q2': { '0':'q3', '1':'q3', '2':'q3', '3':'q3', '4':'q3', '5':'q3' },
+       			'q3': { '0':'q4' },
+				'q4': { '0':'q5', '1':'q5', '2':'q5', '3':'q5', '4':'q5', '5':'q5', '6-9':'q5' },
+				'q5': { '0':'q6', '1':'q6', '2':'q6', '3':'q6', '4':'q6', '5':'q6', '6-9':'q6' },
+				'q6': { 'K':'q7', 'G':'q8', 'M':'q9' },
+				'q7': { 'T':'q10' },
+				'q8': { '0':'q13', '1':'q13', '2':'q13', '3':'q13', '4':'q13', '5':'q13', '6-9':'q13' },
+				'q9': { 'P':'q11' },
+				'q11': { 'S':'q12' },
+				'q13': { '0':'q14', '1':'q14', '2':'q14', '3':'q14', '4':'q14', '5':'q14', '6-9':'q14' },
+				'q14': { 'K':'q7', 'M':'q9' }
      		  }
 
 # **Σημείο #2**: Αντικαταστήστε με το δικό σας λεξικό καταστάσεων αποδοχής
-accepts = { 'q13':'WIND_TOKEN' }
+accepts = { 'q10':'WIND_TOKEN',
+			'q12':'WIND_TOKEN'
+}
 
 
 # get a string from input
